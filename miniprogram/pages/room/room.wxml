@@ -1,0 +1,59 @@
+<view class="hero" style="padding:48rpx 40rpx 100rpx">
+  <view class="eyebrow">ROOM DETAIL</view>
+  <view class="title" style="font-size:46rpx">{{ room.name || '房型详情' }}</view>
+  <view class="desc">{{ room.storeName }} · {{ room.area }}㎡ · 可住 {{ room.capacity }} 人</view>
+</view>
+
+<view class="container" style="margin-top:-60rpx">
+  <view class="card">
+    <view class="room-cover" style="border-radius:6rpx;overflow:hidden">
+      <image wx:if="{{room.cover}}" src="{{room.cover}}" mode="aspectFill" />
+      <text wx:else>◈</text>
+    </view>
+    <view class="room-name" style="margin-top:24rpx">{{ room.name }}</view>
+    <view class="room-intro">{{ room.intro }}</view>
+    <view class="row" style="flex-wrap:wrap;gap:10rpx">
+      <view wx:for="{{room.facilities}}" wx:key="*this" class="tag" style="margin-right:10rpx;margin-bottom:8rpx">{{ item }}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title" style="margin-bottom:6rpx">未来 30 天房价</view>
+    <view class="muted" style="margin-bottom:8rpx">灰显日期暂无可售房量</view>
+    <view class="calendar">
+      <view wx:for="{{calendar}}" wx:key="date" class="day {{item.available ? '' : 'off'}}">
+        <view class="d">{{ item.shortDate }}</view>
+        <view class="p">¥{{ item.price }}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="grid-2">
+      <view class="field">
+        <view class="label">入住</view>
+        <picker mode="date" value="{{checkIn}}" start="{{today}}" bindchange="onCheckIn">
+          <view class="picker">{{ checkIn }}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <view class="label">离店</view>
+        <picker mode="date" value="{{checkOut}}" start="{{checkIn}}" bindchange="onCheckOut">
+          <view class="picker">{{ checkOut }}</view>
+        </picker>
+      </view>
+    </view>
+    <view class="summary-line"><text>可订房量</text><text>{{ available === null ? '点击查询' : available + ' 间' }}</text></view>
+    <view class="summary-line"><text>参考单价</text><text>¥{{ room.basePrice }} / 晚</text></view>
+    <view class="summary-line"><text>共计</text><text>¥{{ total }}（{{ nights }} 晚）</text></view>
+  </view>
+</view>
+
+<view class="footer-space"></view>
+<view class="footer-bar">
+  <view>
+    <view class="price">¥{{ total }}</view>
+    <view class="muted">{{ nights }} 晚 · 含服务费</view>
+  </view>
+  <button class="btn" style="width:300rpx" bindtap="goBook" disabled="{{available === 0}}">立即预订</button>
+</view>

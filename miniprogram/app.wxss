@@ -1,0 +1,71 @@
+page {
+  background: #faf8f2;
+  color: #18241f;
+  font-family: -apple-system, "PingFang SC", "Songti SC", sans-serif;
+  font-size: 28rpx;
+}
+.container { padding: 32rpx; }
+.card {
+  background: #fff;
+  border: 1rpx solid #e7e4da;
+  border-radius: 8rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+}
+.hero {
+  background: linear-gradient(120deg, #1c352d, #3c5b4c);
+  color: #f7f2e5;
+  padding: 64rpx 40rpx 120rpx;
+}
+.hero .eyebrow { font-size: 20rpx; letter-spacing: 6rpx; color: #cdbb95; margin-bottom: 20rpx; }
+.hero .title { font-size: 54rpx; line-height: 1.3; margin-bottom: 18rpx; }
+.hero .desc { color: #cdd9d1; font-size: 25rpx; line-height: 1.8; }
+.section-title { font-size: 34rpx; margin: 10rpx 0 22rpx; font-weight: 600; letter-spacing: 2rpx; }
+.section-sub { color: #75817a; font-size: 24rpx; margin-bottom: 20rpx; }
+.btn {
+  background: #24483c; color: #fff; border-radius: 4rpx; padding: 22rpx 0;
+  text-align: center; font-size: 28rpx; letter-spacing: 2rpx;
+}
+.btn.ghost { background: transparent; color: #24483c; border: 1rpx solid #24483c; }
+.btn.light { background: #f3ede0; color: #24483c; }
+.btn[disabled] { opacity: .5; }
+.row { display: flex; align-items: center; }
+.between { justify-content: space-between; }
+.muted { color: #75817a; font-size: 23rpx; }
+.price { color: #24483c; font-size: 34rpx; font-weight: 600; }
+.price-small { color: #b08a4f; font-size: 24rpx; margin-left: 6rpx; }
+.field { margin-bottom: 22rpx; }
+.field .label { font-size: 23rpx; color: #75817a; margin-bottom: 10rpx; }
+.input, .picker {
+  background: #fdfcf9; border: 1rpx solid #e7e4da; border-radius: 4rpx;
+  padding: 20rpx 18rpx; font-size: 27rpx; color: #18241f;
+}
+.input.full, .picker.full { width: 100%; box-sizing: border-box; }
+textarea.input { width: 100%; box-sizing: border-box; height: 140rpx; }
+.tag {
+  display: inline-block; background: #e7efe9; color: #24483c; font-size: 20rpx;
+  padding: 4rpx 14rpx; border-radius: 99rpx;
+}
+.tag.warn { background: #fcf1e0; color: #9a6a1d; }
+.tag.muted { background: #f1f0ec; color: #75817a; }
+.announce { background: #e7efe9; color: #24483c; padding: 20rpx 24rpx; font-size: 24rpx; line-height: 1.7; border-radius: 6rpx; margin-bottom: 24rpx; }
+.room-card { background: #fff; border: 1rpx solid #e7e4da; border-radius: 8rpx; overflow: hidden; margin-bottom: 24rpx; }
+.room-cover { height: 320rpx; background: linear-gradient(135deg, #dce7df, #b9cbc0); display: flex; align-items: center; justify-content: center; color: rgba(36,72,60,.45); font-size: 60rpx; position: relative; }
+.room-cover image { width: 100%; height: 100%; }
+.room-cover .store { position: absolute; left: 18rpx; top: 18rpx; background: rgba(255,255,255,.9); padding: 6rpx 14rpx; font-size: 20rpx; border-radius: 99rpx; }
+.room-body { padding: 24rpx; }
+.room-name { font-size: 32rpx; font-weight: 600; margin-bottom: 10rpx; }
+.room-meta { color: #75817a; font-size: 23rpx; margin-bottom: 12rpx; }
+.room-intro { color: #69766e; font-size: 24rpx; line-height: 1.7; margin-bottom: 18rpx; }
+.empty { color: #9aa39d; text-align: center; padding: 60rpx 0; font-size: 25rpx; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20rpx; }
+.calendar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12rpx; margin-top: 16rpx; }
+.day { border: 1rpx solid #e7e4da; border-radius: 4rpx; padding: 12rpx 6rpx; text-align: center; background: #fdfcf9; }
+.day.off { opacity: .4; }
+.day .d { font-size: 20rpx; color: #75817a; }
+.day .p { color: #24483c; font-size: 23rpx; font-weight: 600; margin-top: 4rpx; }
+.summary-line { display: flex; justify-content: space-between; font-size: 24rpx; color: #75817a; padding: 12rpx 0; border-bottom: 1rpx dashed #eee; }
+.summary-line text:last-child { color: #18241f; font-weight: 600; }
+.footer-bar { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; border-top: 1rpx solid #e7e4da; padding: 18rpx 32rpx; display: flex; align-items: center; justify-content: space-between; z-index: 20; }
+.footer-space { height: 140rpx; }
+.avatar { width: 110rpx; height: 110rpx; border-radius: 50%; background: #24483c; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 40rpx; }

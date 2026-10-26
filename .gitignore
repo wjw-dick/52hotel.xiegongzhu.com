@@ -1,0 +1,45 @@
+# 环境与密钥
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# 运行态
+logs/
+.runtime/
+*.log
+*.pid
+
+# 后端构建产物
+backend/target/
+*.class
+*.jar
+
+# 前端依赖与构建产物
+**/node_modules/
+**/dist/
+**/.vite/
+admin-web/.env.local
+portal-web/.env.local
+
+# Flutter / Dart
+app/.dart_tool/
+app/build/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+
+# 上传与本地数据
+data/
+uploads/
+
+# IDE / 系统
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# 测试与临时文件
+*.tmp
+*.swp

@@ -1,0 +1,80 @@
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+spring:
+  application:
+    name: hotel-saas
+  datasource:
+    url: ${DB_URL:jdbc:mysql://127.0.0.1:3307/hotel_saas?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true}
+    username: ${DB_USERNAME:hotel}
+    password: ${DB_PASSWORD:Hotel@2026}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      minimum-idle: 5
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DB:0}
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 200
+  rabbitmq:
+    host: ${RABBIT_HOST:127.0.0.1}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USERNAME:guest}
+    password: ${RABBIT_PASSWORD:guest}
+    connection-timeout: 2000ms
+    listener:
+      simple:
+        acknowledge-mode: manual
+        retry:
+          enabled: true
+          max-attempts: 3
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+      continue-on-error: false
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 60MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:hotel-saas-2026-please-change-this-secret-key-0123456789abcdef}
+    expire-hours: ${JWT_EXPIRE_HOURS:12}
+  upload:
+    dir: ${UPLOAD_DIR:./data/uploads}
+    public-prefix: /uploads
+  storage:
+    local-base-url: ${PUBLIC_BASE_URL:http://localhost:8080}
+  demo:
+    seed: ${SEED_DEMO:true}
+
+logging:
+  level:
+    com.hotel.saas: info
+    com.baomidou.mybatisplus: warn

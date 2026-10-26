@@ -1,0 +1,30 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/booking/booking",
+    "pages/orders/orders",
+    "pages/member/member",
+    "pages/room/room"
+  ],
+  "window": {
+    "navigationBarTitleText": "云栖民宿",
+    "navigationBarBackgroundColor": "#24483c",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#faf8f2",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#7d877f",
+    "selectedColor": "#24483c",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "首页" },
+      { "pagePath": "pages/booking/booking", "text": "预订" },
+      { "pagePath": "pages/orders/orders", "text": "订单" },
+      { "pagePath": "pages/member/member", "text": "我的" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

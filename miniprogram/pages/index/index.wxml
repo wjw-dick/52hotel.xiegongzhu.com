@@ -1,0 +1,66 @@
+<view class="hero">
+  <view class="eyebrow">YUNQI RETREAT</view>
+  <view class="title">{{ home.config.tenant_name || '云栖民宿' }}</view>
+  <view class="desc">{{ home.config.slogan || '山水之间，安心住下' }}</view>
+</view>
+
+<view class="container" style="margin-top:-70rpx">
+  <view class="card">
+    <view class="row between" style="margin-bottom:20rpx">
+      <view>
+        <view class="section-title" style="margin:0">快速预订</view>
+        <view class="muted" style="margin-top:8rpx">选择日期与房型，实时查看可订房量</view>
+      </view>
+      <view class="tag">官方直订</view>
+    </view>
+    <view class="grid-2">
+      <view class="field">
+        <view class="label">入住</view>
+        <picker mode="date" value="{{checkIn}}" start="{{today}}" bindchange="onCheckIn">
+          <view class="picker">{{ checkIn }}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <view class="label">离店</view>
+        <picker mode="date" value="{{checkOut}}" start="{{checkIn}}" bindchange="onCheckOut">
+          <view class="picker">{{ checkOut }}</view>
+        </picker>
+      </view>
+    </view>
+    <button class="btn" bindtap="goBooking">查询房态并预订</button>
+  </view>
+
+  <view class="announce">{{ home.announcement }}</view>
+
+  <view class="section-title">房型甄选</view>
+  <view class="section-sub">价格为门市参考价，实际以所选日期为准</view>
+
+  <view wx:if="{{!rooms.length}}" class="empty">正在准备房间…</view>
+  <view wx:for="{{rooms}}" wx:key="id" class="room-card" bindtap="goRoom" data-id="{{item.id}}">
+    <view class="room-cover">
+      <image wx:if="{{item.cover}}" src="{{item.cover}}" mode="aspectFill" />
+      <text wx:else>◈</text>
+      <view class="store">{{ item.storeName }}</view>
+    </view>
+    <view class="room-body">
+      <view class="room-name">{{ item.name }}</view>
+      <view class="room-meta">{{ item.area }}㎡ · 可住 {{ item.capacity }} 人 · {{ item.bedType }}</view>
+      <view class="room-intro">{{ item.intro }}</view>
+      <view class="row between">
+        <view class="price">¥{{ item.basePrice }}<text class="price-small">/ 晚起</text></view>
+        <view class="tag">查看详情 →</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-title" style="margin-top:40rpx">两处山居</view>
+  <view wx:for="{{home.stores}}" wx:key="id" class="card">
+    <view class="row between" style="margin-bottom:12rpx">
+      <view style="font-size:30rpx;font-weight:600">{{ item.name }}</view>
+      <view class="tag">{{ item.city }}</view>
+    </view>
+    <view class="muted">{{ item.address }}</view>
+    <view class="room-intro" style="margin-top:12rpx">{{ item.intro }}</view>
+    <view class="muted">电话 {{ item.phone }}</view>
+  </view>
+</view>

@@ -1,0 +1,44 @@
+<view class="container">
+  <view class="section-title">订单查询</view>
+  <view class="card">
+    <view class="field">
+      <view class="label">订单号</view>
+      <input class="input full" placeholder="如 YQ-HZ-2026-0001" value="{{orderNo}}" bindinput="onOrderNo" />
+    </view>
+    <view class="field">
+      <view class="label">预订手机号</view>
+      <input class="input full" type="number" maxlength="11" placeholder="下单时填写的手机号" value="{{phone}}" bindinput="onPhone" />
+    </view>
+    <button class="btn" loading="{{loading}}" bindtap="query">查询订单</button>
+  </view>
+
+  <view wx:if="{{order}}" class="card">
+    <view class="row between">
+      <view style="font-size:30rpx;font-weight:600">{{ order.orderNo }}</view>
+      <view class="tag {{ order.statusClass }}">{{ order.statusText }}</view>
+    </view>
+    <view class="summary-line"><text>入住人</text><text>{{ order.guestName }}</text></view>
+    <view class="summary-line"><text>房型</text><text>{{ order.roomTypeName || '-' }}</text></view>
+    <view class="summary-line"><text>入住 / 离店</text><text>{{ order.checkIn }} → {{ order.checkOut }}</text></view>
+    <view class="summary-line"><text>房间</text><text>{{ order.roomNo || '待分配' }}</text></view>
+    <view class="summary-line"><text>金额</text><text>¥{{ order.amountText }}</text></view>
+    <view class="summary-line"><text>备注</text><text>{{ order.remark || '-' }}</text></view>
+  </view>
+
+  <block wx:if="{{member}}">
+    <view class="section-title" style="margin-top:40rpx">我的订单</view>
+    <view wx:if="{{!myOrders.length}}" class="empty">暂无订单，去首页预订一间吧</view>
+    <view wx:for="{{myOrders}}" wx:key="id" class="card">
+      <view class="row between">
+        <view style="font-size:28rpx;font-weight:600">{{ item.orderNo }}</view>
+        <view class="tag {{ item.statusClass }}">{{ item.statusText }}</view>
+      </view>
+      <view class="muted" style="margin:12rpx 0">{{ item.checkIn }} → {{ item.checkOut }} · {{ item.nights }} 晚</view>
+      <view class="row between">
+        <view class="price" style="font-size:30rpx">¥{{ item.amountText }}</view>
+        <button wx:if="{{item.status === 'PENDING' || item.status === 'CONFIRMED'}}" class="tag" style="border:none" data-id="{{item.id}}" bindtap="cancelOrder">取消订单</button>
+      </view>
+    </view>
+  </block>
+  <view wx:else class="announce" style="margin-top:32rpx">登录会员中心后可查看全部订单并自助取消。</view>
+</view>
