@@ -19,6 +19,7 @@ backend/target/
 # 前端依赖与构建产物
 **/node_modules/
 **/dist/
+**/dist-root/
 **/.vite/
 admin-web/.env.local
 portal-web/.env.local

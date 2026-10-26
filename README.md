@@ -5,6 +5,7 @@
 - 交付基线：**v1.0.0（2026-10-26）**
 - 部署形态：**Nginx 反向代理 + 宝塔/裸机 systemd 直接部署**（生产首选）；仓库内另附 Dockerfile 作为可选辅助方案，本次不构建镜像。
 - 实现口径：核心业务闭环已实现并通过接口联调；微信开放平台、支付、公安报送、OTA、门锁等外部能力当前为**演示/模拟实现**，接入真实服务需补充资质、密钥与回调地址。详见「[实现状态与边界](#实现状态与边界)」。
+- 公网演示：H5 <https://52hotel-h5.xiegongzhu.com/>｜PC 后台 <https://52hotel-admin.xiegongzhu.com/>｜API <https://52hotel-api.xiegongzhu.com/api/health>。主域名 <https://52hotel.xiegongzhu.com/> 保留为 H5 入口。
 
 ---
 
