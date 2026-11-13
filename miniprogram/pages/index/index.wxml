@@ -38,7 +38,7 @@
   <view wx:if="{{!rooms.length}}" class="empty">正在准备房间…</view>
   <view wx:for="{{rooms}}" wx:key="id" class="room-card" bindtap="goRoom" data-id="{{item.id}}">
     <view class="room-cover">
-      <image wx:if="{{item.cover}}" src="{{item.cover}}" mode="aspectFill" />
+      <image wx:if="{{item.cover || (item.images && item.images[0])}}" src="{{item.cover || item.images[0]}}" mode="aspectFill" />
       <text wx:else>◈</text>
       <view class="store">{{ item.storeName }}</view>
     </view>

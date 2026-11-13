@@ -249,8 +249,8 @@ class _RoomCard extends StatelessWidget {
               height: 170,
               width: double.infinity,
               color: const Color(0xFFDCE7DF),
-              child: room.cover != null
-                  ? Image.network(room.cover!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const Icon(Icons.landscape, size: 60))
+              child: room.gallery.isNotEmpty
+                  ? Image.network(room.gallery.first, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const Icon(Icons.landscape, size: 60))
                   : const Icon(Icons.landscape, size: 60, color: Color(0x6624483C)),
             ),
             Padding(

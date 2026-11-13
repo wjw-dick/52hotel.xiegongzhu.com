@@ -21,11 +21,15 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class StorageService {
+    private static final long MAX_IMAGE_SIZE = 5 * 1024 * 1024L;
+    private static final Set<String> IMAGE_EXTENSIONS = Set.of(".jpg", ".jpeg", ".png", ".webp", ".gif");
+
     private final StorageConfigMapper storageMapper;
     private final CryptoService crypto;
 
@@ -82,8 +86,10 @@ public class StorageService {
 
     public String upload(Long tenantId, MultipartFile file, String category) {
         if (file == null || file.isEmpty()) throw new BizException("请选择文件");
+        if (file.getSize() > MAX_IMAGE_SIZE) throw new BizException("图片大小不能超过 5MB");
         String original = file.getOriginalFilename() == null ? "file" : file.getOriginalFilename();
-        String ext = original.contains(".") ? original.substring(original.lastIndexOf('.')) : "";
+        String ext = original.contains(".") ? original.substring(original.lastIndexOf('.')).toLowerCase() : "";
+        if (!IMAGE_EXTENSIONS.contains(ext)) throw new BizException("仅支持 JPG / PNG / WebP / GIF 格式图片");
         String month = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM"));
         String object = tenantId + "/" + (category == null ? "common" : category) + "/" + month + "/" + IdUtil.fastSimpleUUID() + ext;
         StorageConfig c = config(tenantId);

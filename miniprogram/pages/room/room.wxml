@@ -6,10 +6,12 @@
 
 <view class="container" style="margin-top:-60rpx">
   <view class="card">
-    <view class="room-cover" style="border-radius:6rpx;overflow:hidden">
-      <image wx:if="{{room.cover}}" src="{{room.cover}}" mode="aspectFill" />
-      <text wx:else>◈</text>
-    </view>
+    <swiper wx:if="{{gallery.length}}" class="room-swiper" indicator-dots circular>
+      <swiper-item wx:for="{{gallery}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" />
+      </swiper-item>
+    </swiper>
+    <view wx:else class="room-cover" style="border-radius:6rpx;overflow:hidden"><text>◈</text></view>
     <view class="room-name" style="margin-top:24rpx">{{ room.name }}</view>
     <view class="room-intro">{{ room.intro }}</view>
     <view class="row" style="flex-wrap:wrap;gap:10rpx">

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class HomeData {
   final Map<String, dynamic> tenant;
   final Map<String, dynamic> config;
@@ -50,6 +52,7 @@ class RoomType {
   final List<String> facilities;
   final String intro;
   final String? cover;
+  final List<String> images;
 
   RoomType({
     required this.id,
@@ -63,7 +66,11 @@ class RoomType {
     required this.facilities,
     required this.intro,
     this.cover,
+    this.images = const [],
   });
+
+  List<String> get gallery =>
+      images.isNotEmpty ? images : (cover != null && cover!.isNotEmpty ? [cover!] : []);
 
   factory RoomType.fromJson(Map<String, dynamic> json) => RoomType(
         id: json['id'] ?? 0,
@@ -77,7 +84,29 @@ class RoomType {
         facilities: (json['facilities'] as List? ?? []).map((e) => '$e').toList(),
         intro: json['intro']?.toString() ?? '',
         cover: json['cover']?.toString(),
+        images: parseImages(json['images']),
       );
+}
+
+/// 后端 images 既可能是 JSON 数组，也可能是被序列化后的字符串（"[\"a\",\"b\"]"）。
+List<String> parseImages(dynamic raw) {
+  if (raw == null) return const [];
+  if (raw is List) {
+    return raw.map((e) => '$e').where((e) => e.isNotEmpty).toList();
+  }
+  final s = raw.toString().trim();
+  if (s.isEmpty || s == 'null') return const [];
+  try {
+    final decoded = jsonDecode(s);
+    if (decoded is List) {
+      return decoded.map((e) => '$e').where((e) => e.isNotEmpty).toList();
+    }
+    if (decoded is String) return decoded.isEmpty ? const [] : <String>[decoded];
+  } catch (_) {
+    if (s.startsWith('http')) return <String>[s];
+    return s.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+  }
+  return const [];
 }
 
 class RoomCalendar {

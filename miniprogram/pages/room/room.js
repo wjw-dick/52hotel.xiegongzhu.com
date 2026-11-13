@@ -4,6 +4,7 @@ Page({
   data: {
     id: null,
     room: {},
+    gallery: [],
     calendar: [],
     checkIn: util.today(),
     checkOut: util.addDays(util.today(), 2),
@@ -25,8 +26,11 @@ Page({
       const calendar = (data.calendar || []).map((d) => {
         return Object.assign({}, d, { shortDate: d.date.slice(5) })
       })
-      this.setData({ room: data.roomType || {}, calendar: calendar })
-      wx.setNavigationBarTitle({ title: (data.roomType && data.roomType.name) || '房型详情' })
+      const rt = data.roomType || {}
+      const images = util.parseImages(rt.images)
+      const gallery = images.length ? images : (rt.cover ? [rt.cover] : [])
+      this.setData({ room: rt, gallery: gallery, calendar: calendar })
+      wx.setNavigationBarTitle({ title: (rt && rt.name) || '房型详情' })
       this.calc()
       this.checkAvailability()
     })

@@ -1,1 +1,3 @@
 .page { padding-bottom: 20rpx; }
+.room-swiper { height: 320rpx; border-radius: 6rpx; overflow: hidden; }
+.room-swiper image { width: 100%; height: 100%; }

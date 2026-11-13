@@ -56,9 +56,23 @@ function pad(n) {
   return n < 10 ? '0' + n : '' + n
 }
 
+function parseImages(raw) {
+  if (!raw) return []
+  if (Array.isArray(raw)) return raw.map(String).filter(Boolean)
+  const s = String(raw).trim()
+  if (!s) return []
+  if (s.charAt(0) === '[') {
+    try {
+      const arr = JSON.parse(s)
+      return Array.isArray(arr) ? arr.map(String).filter(Boolean) : []
+    } catch (e) {}
+  }
+  return s.split(',').map(x => x.trim()).filter(Boolean)
+}
+
 const statusMap = {
   PENDING: '待确认', CONFIRMED: '已确认', CHECKED_IN: '在住',
   CHECKED_OUT: '已退房', CANCELLED: '已取消', NO_SHOW: '未到店'
 }
 
-module.exports = { request, publicPath, money, today, addDays, statusMap }
+module.exports = { request, publicPath, money, today, addDays, statusMap, parseImages }

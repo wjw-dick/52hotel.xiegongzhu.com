@@ -59,7 +59,7 @@
       <div v-else class="room-grid">
         <article v-for="room in filteredRooms" :key="room.id" class="room-card">
           <div class="room-cover">
-            <img v-if="room.cover" :src="room.cover" :alt="room.name" loading="lazy" />
+            <img v-if="coverOf(room)" :src="coverOf(room)" :alt="room.name" loading="lazy" />
             <div v-else class="placeholder">◈</div>
             <span class="store-tag">{{ room.storeName }}</span>
           </div>
@@ -154,6 +154,37 @@ const filteredRooms = computed(() => {
   const list = store.home?.roomTypes || []
   return search.storeId ? list.filter((r: any) => String(r.storeId) === search.storeId) : list
 })
+
+function norm(u: string): string {
+  if (!u) return ''
+  const path = u.replace(/^https?:\/\/[^/]*\/uploads\//, '/uploads/')
+  if (!path.includes('/uploads/')) return path
+  return path + (path.includes('?') ? '&' : '?') + 'v=2'
+}
+
+function firstImage(v: any): string {
+  if (!v) return ''
+  if (Array.isArray(v)) return v.filter(Boolean)[0] ? norm(String(v.filter(Boolean)[0])) : ''
+  if (typeof v === 'string') {
+    const s = v.trim()
+    if (!s || s === 'null') return ''
+    try {
+      const parsed = JSON.parse(s)
+      if (Array.isArray(parsed)) {
+        const first = parsed.filter(Boolean)[0]
+        return first ? norm(String(first)) : ''
+      }
+    } catch {
+      return s.startsWith('http') || s.startsWith('/uploads/') ? norm(s) : ''
+    }
+  }
+  return ''
+}
+
+function coverOf(room: any): string {
+  if (room?.cover) return norm(String(room.cover))
+  return firstImage(room?.images)
+}
 
 function ensureDates() {
   if (search.checkOut <= search.checkIn) search.checkOut = addDays(search.checkIn, 1)

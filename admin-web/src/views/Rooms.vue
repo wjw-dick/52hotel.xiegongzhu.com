@@ -13,6 +13,12 @@
           <el-button type="primary" :icon="Plus" @click="openType()">新增房型</el-button>
         </div>
         <el-table v-loading="loadingTypes" :data="types">
+          <el-table-column label="封面" width="90">
+            <template #default="{ row }">
+              <img v-if="row.cover" :src="row.cover" class="cover-thumb" alt="封面" />
+              <span v-else class="muted">-</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="code" label="编码" width="130" />
           <el-table-column prop="name" label="房型名称" min-width="140" />
           <el-table-column label="所属门店" min-width="150">
@@ -145,6 +151,12 @@
         <el-form-item label="面积㎡"><el-input-number v-model="typeForm.area" :min="0" style="width:100%" /></el-form-item>
         <el-form-item label="可住人数"><el-input-number v-model="typeForm.capacity" :min="1" style="width:100%" /></el-form-item>
         <el-form-item label="床型"><el-input v-model="typeForm.bedType" placeholder="如 1.8m 大床" /></el-form-item>
+        <el-form-item label="封面图" class="full">
+          <ImageUploader v-model="typeForm.cover" category="room-type" />
+        </el-form-item>
+        <el-form-item label="房型图集" class="full">
+          <ImageUploader v-model="imageList" multiple category="room-type" />
+        </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="typeForm.status">
             <el-radio :value="1">在售</el-radio>
@@ -231,6 +243,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { Download, Plus, Upload } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import http from '@/api/http'
+import ImageUploader from '@/components/ImageUploader.vue'
 import { addDays, dateTime, money, monthStart, roomStatus, today } from '@/utils/format'
 
 const tab = ref('types')
@@ -254,8 +267,9 @@ const rateCalendar = ref<Record<string, any>>({})
 const rateLogs = ref<any[]>([])
 const batchRange = ref<[string, string] | null>(null)
 
-const emptyType = () => ({ id: undefined, storeId: undefined, name: '', code: '', area: 30, capacity: 2, bedType: '', facilities: '', basePrice: 0, intro: '', status: 1, sort: 0 })
+const emptyType = () => ({ id: undefined, storeId: undefined, name: '', code: '', area: 30, capacity: 2, bedType: '', facilities: '', cover: '', images: '', basePrice: 0, intro: '', status: 1, sort: 0 })
 const typeForm = reactive<any>(emptyType())
+const imageList = ref<string[]>([])
 const emptyRoom = () => ({ id: undefined, storeId: undefined, roomTypeId: undefined, buildingId: 1, floor: 1, roomNo: '', status: 'VACANT', lockCode: '', remark: '' })
 const roomForm = reactive<any>(emptyRoom())
 const batchForm = reactive<any>({ priceType: 'BAR', price: 0 })
@@ -301,15 +315,34 @@ async function loadRooms() {
   }
 }
 
+function parseImages(raw: any): string[] {
+  if (!raw) return []
+  if (Array.isArray(raw)) return raw.map(String)
+  const s = String(raw).trim()
+  if (!s) return []
+  try {
+    const arr = JSON.parse(s)
+    return Array.isArray(arr) ? arr.map(String) : []
+  } catch {
+    return s.split(',').map(x => x.trim()).filter(Boolean)
+  }
+}
+
 function openType(row?: any) {
   Object.assign(typeForm, emptyType())
-  if (row) Object.assign(typeForm, row)
-  else typeForm.storeId = typeStore.value || stores.value[0]?.id
+  if (row) {
+    Object.assign(typeForm, row)
+    imageList.value = parseImages(row.images)
+  } else {
+    imageList.value = []
+    typeForm.storeId = typeStore.value || stores.value[0]?.id
+  }
   typeDialog.value = true
 }
 
 async function saveType() {
   if (!typeForm.name || !typeForm.code || !typeForm.storeId) return ElMessage.warning('请填写门店、房型名称与编码')
+  typeForm.images = JSON.stringify(imageList.value)
   if (typeForm.id) await http.put(`/admin/room-types/${typeForm.id}`, typeForm)
   else await http.post('/admin/room-types', typeForm)
   ElMessage.success('保存成功')
@@ -429,6 +462,7 @@ onMounted(async () => {
 
 <style scoped>
 .rate-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.cover-thumb { width: 64px; height: 44px; object-fit: cover; border-radius: 6px; }
 .rate-cell { border: 1px solid var(--border); border-radius: 6px; padding: 10px; background: #fbfcff; min-height: 74px; }
 .rate-cell.empty { background: #f7f8fa; color: #9aa3b2; }
 .rate-cell .d { font-size: 17px; font-weight: 700; }

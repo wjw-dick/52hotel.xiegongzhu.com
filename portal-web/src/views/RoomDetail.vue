@@ -14,10 +14,29 @@
         <div class="split-2">
           <div>
             <div class="panel">
-              <div style="aspect-ratio:16/7;background:linear-gradient(135deg,#dce7df,#adc4b7);display:grid;place-items:center;color:rgba(36,72,60,.45);font-size:52px">
-                <img v-if="data.roomType?.cover" :src="data.roomType.cover" :alt="data.roomType?.name" style="width:100%;height:100%;object-fit:cover" />
+              <div class="gallery">
+              <div class="gallery-main" :class="{ placeholder: !gallery.length }">
+                <img v-if="gallery.length" :src="gallery[activeImg]" :alt="data.roomType?.name" @click="openViewer(activeImg)" />
                 <span v-else>◈</span>
+                <template v-if="gallery.length > 1">
+                  <button type="button" class="gallery-arrow left" @click="shiftImg(-1)">‹</button>
+                  <button type="button" class="gallery-arrow right" @click="shiftImg(1)">›</button>
+                  <span class="gallery-counter">{{ activeImg + 1 }} / {{ gallery.length }}</span>
+                </template>
               </div>
+              <div v-if="gallery.length" class="gallery-thumbs">
+                <button
+                  v-for="(g, i) in gallery"
+                  :key="g + i"
+                  type="button"
+                  class="gallery-thumb"
+                  :class="{ active: i === activeImg }"
+                  @click="activeImg = i"
+                >
+                  <img :src="g" :alt="`${data.roomType?.name} 图 ${i + 1}`" />
+                </button>
+              </div>
+            </div>
               <h2 style="margin-top:24px">{{ data.roomType?.name }}</h2>
               <p style="color:#69766e;line-height:1.9;font-family:'PingFang SC',sans-serif;font-size:13.5px">{{ data.roomType?.intro }}</p>
               <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
@@ -71,6 +90,14 @@
         </div>
       </template>
     </div>
+
+    <div v-if="viewerOpen" class="viewer" @click.self="viewerOpen = false">
+      <button type="button" class="viewer-close" @click="viewerOpen = false">×</button>
+      <img :src="gallery[viewerIndex]" :alt="data.roomType?.name" />
+      <button v-if="gallery.length > 1" type="button" class="viewer-arrow left" @click="viewerShift(-1)">‹</button>
+      <button v-if="gallery.length > 1" type="button" class="viewer-arrow right" @click="viewerShift(1)">›</button>
+      <div class="viewer-counter">{{ viewerIndex + 1 }} / {{ gallery.length }}</div>
+    </div>
   </div>
 </template>
 
@@ -96,6 +123,54 @@ const nights = computed(() => {
 })
 const total = computed(() => Number(data.value.roomType?.basePrice || 0) * nights.value)
 const canBook = computed(() => availability.value !== null && availability.value > 0)
+
+const activeImg = ref(0)
+const viewerOpen = ref(false)
+const viewerIndex = ref(0)
+
+function norm(u: string): string {
+  if (!u) return ''
+  const path = u.replace(/^https?:\/\/[^/]*\/uploads\//, '/uploads/')
+  if (!path.includes('/uploads/')) return path
+  return path + (path.includes('?') ? '&' : '?') + 'v=2'
+}
+
+function toList(v: any): string[] {
+  if (!v) return []
+  if (Array.isArray(v)) return v.filter(Boolean).map(x => norm(String(x)))
+  if (typeof v === 'string') {
+    const s = v.trim()
+    if (!s || s === 'null') return []
+    try {
+      const parsed = JSON.parse(s)
+      if (Array.isArray(parsed)) return parsed.filter(Boolean).map(x => norm(String(x)))
+    } catch {
+      return s.split(',').map(x => norm(x.trim())).filter(Boolean)
+    }
+  }
+  return []
+}
+
+const gallery = computed(() => {
+  const rt = data.value.roomType || {}
+  const imgs = toList(rt.images)
+  if (imgs.length) return imgs
+  const cover = rt.cover ? String(rt.cover) : ''
+  return cover ? [cover] : []
+})
+function shiftImg(step: number) {
+  if (!gallery.value.length) return
+  activeImg.value = (activeImg.value + step + gallery.value.length) % gallery.value.length
+}
+function openViewer(index: number) {
+  viewerIndex.value = index
+  viewerOpen.value = true
+}
+function viewerShift(step: number) {
+  if (!gallery.value.length) return
+  viewerIndex.value = (viewerIndex.value + step + gallery.value.length) % gallery.value.length
+}
+watch(gallery, () => { activeImg.value = 0 })
 
 function ensureDates() {
   if (form.checkOut <= form.checkIn) form.checkOut = addDays(form.checkIn, 1)
@@ -133,3 +208,112 @@ onMounted(async () => {
   }
 })
 </script>
+
+<style scoped>
+.gallery-main {
+  position: relative;
+  aspect-ratio: 16 / 7;
+  background: linear-gradient(135deg, #dce7df, #adc4b7);
+  display: grid;
+  place-items: center;
+  color: rgba(36, 72, 60, .45);
+  font-size: 52px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.gallery-main img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .85);
+  color: #24483c;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.gallery-arrow.left { left: 12px; }
+.gallery-arrow.right { right: 12px; }
+.gallery-counter {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 3px 10px;
+  border-radius: 14px;
+  background: rgba(15, 30, 24, .62);
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: .5px;
+}
+.gallery-thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.gallery-thumb {
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  background: transparent;
+  cursor: pointer;
+  line-height: 0;
+  transition: border-color .18s ease, transform .18s ease;
+}
+.gallery-thumb img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; border-radius: 6px; }
+.gallery-thumb:hover { transform: translateY(-1px); }
+.gallery-thumb.active { border-color: #24483c; }
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(10, 18, 14, .9);
+  display: grid;
+  place-items: center;
+}
+.viewer img { max-width: min(1100px, 92vw); max-height: 86vh; object-fit: contain; border-radius: 6px; }
+.viewer-close {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, .88);
+  color: #24483c;
+  font-size: 22px;
+  cursor: pointer;
+}
+.viewer-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .82);
+  color: #24483c;
+  font-size: 24px;
+  cursor: pointer;
+}
+.viewer-arrow.left { left: 3vw; }
+.viewer-arrow.right { right: 3vw; }
+.viewer-counter {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #dbe6df;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+</style>

@@ -193,10 +193,24 @@ public class PublicController {
         m.put("bedType", rt.getBedType());
         m.put("facilities", rt.getFacilities() == null ? List.of() : List.of(rt.getFacilities().split(",")));
         m.put("cover", rt.getCover());
-        m.put("images", rt.getImages());
+        m.put("images", parseImages(rt.getImages()));
         m.put("basePrice", rt.getBasePrice());
         m.put("intro", rt.getIntro());
         return m;
+    }
+
+    private List<String> parseImages(String raw) {
+        if (raw == null || raw.isBlank()) return List.of();
+        String s = raw.trim();
+        if (s.startsWith("[")) {
+            try {
+                return JSONUtil.parseArray(s).stream()
+                        .map(Object::toString).filter(x -> !x.isBlank()).toList();
+            } catch (Exception ignored) {
+                // 解析失败时按逗号分隔兼容处理
+            }
+        }
+        return Arrays.stream(s.split(",")).map(String::trim).filter(x -> !x.isEmpty()).toList();
     }
 
     private boolean roomServiceAvailable(Long tid, Long typeId, LocalDate date) {

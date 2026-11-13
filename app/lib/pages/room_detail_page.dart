@@ -18,6 +18,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   RoomType? room;
   List<RoomCalendar> calendar = [];
   int? available;
+  int _galleryIndex = 0;
   late DateTime checkIn = widget.checkIn;
   late DateTime checkOut = widget.checkOut;
   bool loading = true;
@@ -123,9 +124,44 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
           Container(
             height: 220,
             color: const Color(0xFFDCE7DF),
-            child: room!.cover != null
-                ? Image.network(room!.cover!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const Icon(Icons.landscape, size: 70))
-                : const Icon(Icons.landscape, size: 70, color: Color(0x6624483C)),
+            child: room!.gallery.isEmpty
+                ? const Icon(Icons.landscape, size: 70, color: Color(0x6624483C))
+                : Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      PageView.builder(
+                        itemCount: room!.gallery.length,
+                        onPageChanged: (i) => setState(() => _galleryIndex = i),
+                        itemBuilder: (_, i) => Image.network(
+                          room!.gallery[i],
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) =>
+                              const Icon(Icons.landscape, size: 70),
+                        ),
+                      ),
+                      if (room!.gallery.length > 1)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(
+                              room!.gallery.length,
+                              (i) => Container(
+                                width: 8,
+                                height: 8,
+                                margin: const EdgeInsets.symmetric(horizontal: 4),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _galleryIndex == i
+                                      ? Colors.white
+                                      : Colors.white54,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.all(18),
