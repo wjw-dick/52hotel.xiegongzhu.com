@@ -21,7 +21,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-label">今日日期</div>
-        <div class="stat-value" style="font-size:22px">{{ today }}</div>
+        <div class="stat-value" style="font-size:22px">{{ today() }}</div>
         <div class="stat-foot">前台当班可自助交接</div>
       </div>
     </div>

@@ -3,7 +3,7 @@
     <div class="head-row">
       <div>
         <h2 class="page-title">经营概览</h2>
-        <p class="page-sub">{{ data.tenantName || '当前租户' }} · 数据截至 {{ today }}，租户到期 {{ data.expireTime || '-' }}</p>
+        <p class="page-sub">{{ data.tenantName || '当前租户' }} · 数据截至 {{ today() }}，租户到期 {{ data.expireTime || '-' }}</p>
       </div>
       <el-button :icon="Refresh" @click="load">刷新</el-button>
     </div>
